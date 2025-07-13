@@ -16,6 +16,6 @@ func inputData() float64 {
 	return userInput
 }
 
-func calculate(money float64, usd float64, usdConvertTo float64) {
+func calculate(money float64, usd float64, usdConvertTo float64) float64 {
 
 }
