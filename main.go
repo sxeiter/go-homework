@@ -1,7 +1,7 @@
 package main
 
-main() {
-	const USD float64
-	const EUR float64
-	const RUB float64
+import "fmt"
+
+func main() {
+	fmt.Println("Hello world")
 }
