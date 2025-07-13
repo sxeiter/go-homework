@@ -1,7 +1,8 @@
 package main
 
-main() {
-	const USD float64
-	const EUR float64
-	const RUB float64
+func main() {
+	const USD float64 = 1
+	const USDtoEUR float64 = USD * 1.1
+	const USDtoRUB float64 = USD * 80
+
 }
