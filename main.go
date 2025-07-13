@@ -58,6 +58,9 @@ func isValidCurrency(currency string) bool {
 }
 
 func calculate(amount float64, fromCurrency string, toCurrency string) float64 {
+	if fromCurrency == toCurrency {
+		return amount
+	}
 	switch fromCurrency {
 	case "USD":
 		switch toCurrency {
