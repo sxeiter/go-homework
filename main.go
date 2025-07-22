@@ -4,12 +4,13 @@ import (
 	"fmt"
 )
 
-const (
-	USD      float64 = 1
-	USDtoEUR float64 = USD * 0.9
-	USDtoRUB float64 = USD * 80
-	EURtoRUB float64 = USDtoRUB / USDtoEUR
-)
+const USD float64 = 1
+
+var currencyRates = map[string]float64{
+	"USD": 1,
+	"EUR": 0.9,
+	"RUB": 80,
+}
 
 func main() {
 	fromCurrency, amount, toCurrency := getUserInput()
@@ -61,30 +62,9 @@ func calculate(amount float64, fromCurrency string, toCurrency string) float64 {
 	if fromCurrency == toCurrency {
 		return amount
 	}
-	switch fromCurrency {
-	case "USD":
-		switch toCurrency {
-		case "EUR":
-			return amount * USDtoEUR
-		case "RUB":
-			return amount * USDtoRUB
-		}
-	case "EUR":
-		switch toCurrency {
-		case "USD":
-			return amount / USDtoEUR
-		case "RUB":
-			return amount * EURtoRUB
-		}
-	case "RUB":
-		switch toCurrency {
-		case "USD":
-			return amount / USDtoRUB
-		case "EUR":
-			return amount / EURtoRUB
-		}
-	}
-	return 0
+	fromRate := currencyRates[fromCurrency]
+	toRate := currencyRates[toCurrency]
+	return amount * (toRate / fromRate)
 }
 
 func outputResult(result float64, currency string) {
