@@ -38,12 +38,15 @@ func main() {
 	}
 }
 
-func AVG(numbers []float64) float64 {
+func AVG(numbers []float64) (float64, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("вы ничего не передали")
+	}
 	sum := 0.0
 	for _, num := range numbers {
 		sum += num
 	}
-	return sum / float64(len(numbers))
+	return sum / float64(len(numbers)), nil
 }
 
 func SUM(numbers []float64) float64 {
