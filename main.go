@@ -2,91 +2,83 @@ package main
 
 import (
 	"fmt"
-)
-
-const (
-	USD      float64 = 1
-	USDtoEUR float64 = USD * 0.9
-	USDtoRUB float64 = USD * 80
-	EURtoRUB float64 = USDtoRUB / USDtoEUR
+	"os"
+	"sort"
+	"strconv"
+	"strings"
 )
 
 func main() {
-	fromCurrency, amount, toCurrency := getUserInput()
-	result := calculate(amount, fromCurrency, toCurrency)
-	outputResult(result, toCurrency)
-}
+	if len(os.Args) < 3 {
+		fmt.Println("Используйте: go run main.go<Операция(нужно выбрать одну из AVG, SUM или MED)><Числа через запятую>")
+		return
+	}
+	operation := os.Args[1]
+	numbersStr := os.Args[2]
 
-func getUserInput() (string, float64, string) {
-	var fromCurrency string
-	var amount float64
-	var toCurrency string
-	for {
-		fmt.Println("Введите исходную валюту (USD, RUB, EUR):")
-		fmt.Scan(&fromCurrency)
-		if isValidCurrency(fromCurrency) {
-			break
+	numberString := strings.Split(numbersStr, ",")
+	var numbers []float64
+	for _, numStr := range numberString {
+		num, err := strconv.ParseFloat(strings.TrimSpace(numStr), 64)
+		if err != nil {
+			fmt.Println("Ошибка")
+			return
+		}
+		numbers = append(numbers, num)
+	}
+	switch operation {
+	case "AVG":
+		avg, err := AVG(numbers)
+		if err != nil {
+			fmt.Println("Ошибка:", err)
 		} else {
-			fmt.Println("Неверная валюта. Пожалуйста, попробуйте снова.")
+			fmt.Printf("Среднее: %.2f\n", avg)
 		}
-	}
-	for {
-		fmt.Println("Введите количество денег:")
-		_, err := fmt.Scan(&amount)
-		if err == nil && amount > 0 {
-			break
+	case "SUM":
+		sum, err := SUM(numbers)
+		if err != nil {
+			fmt.Println("Ошибка:", err)
 		} else {
-			fmt.Println("Неверное число. Пожалуйста, введите положительное число.")
-			var temp string
-			fmt.Scan(&temp)
+			fmt.Printf("Сумма: %.2f\n", sum)
 		}
+	case "MED":
+		med := MED(numbers)
+		fmt.Printf("Медиана: %.2f\n", med)
+	default:
+		fmt.Println("Недопустимая операция. Используйте AVG, SUM или MED.")
 	}
-	for {
-		fmt.Println("Введите валюту, в которую будем конвертировать (USD, RUB, EUR):")
-		fmt.Scan(&toCurrency)
-		if isValidCurrency(toCurrency) {
-			break
-		} else {
-			fmt.Println("Неверная валюта. Пожалуйста, попробуйте снова.")
-		}
-	}
-	return fromCurrency, amount, toCurrency
 }
 
-func isValidCurrency(currency string) bool {
-	return currency == "USD" || currency == "RUB" || currency == "EUR"
+func AVG(numbers []float64) (float64, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("вы ничего не передали")
+	}
+	sum := 0.0
+	for _, num := range numbers {
+		sum += num
+	}
+	return sum / float64(len(numbers)), nil
 }
 
-func calculate(amount float64, fromCurrency string, toCurrency string) float64 {
-	if fromCurrency == toCurrency {
-		return amount
+func SUM(numbers []float64) (float64, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("вы ничего не передали")
 	}
-	switch fromCurrency {
-	case "USD":
-		switch toCurrency {
-		case "EUR":
-			return amount * USDtoEUR
-		case "RUB":
-			return amount * USDtoRUB
-		}
-	case "EUR":
-		switch toCurrency {
-		case "USD":
-			return amount / USDtoEUR
-		case "RUB":
-			return amount * EURtoRUB
-		}
-	case "RUB":
-		switch toCurrency {
-		case "USD":
-			return amount / USDtoRUB
-		case "EUR":
-			return amount / EURtoRUB
-		}
+	total := 0.0
+	for _, num := range numbers {
+		total += num
 	}
-	return 0
+	return total, nil
 }
 
-func outputResult(result float64, currency string) {
-	fmt.Printf("Результат: %.2f %s\n", result, currency)
+func MED(numbers []float64) float64 {
+	n := len(numbers)
+	if n == 0 {
+		return 0
+	}
+	sort.Float64s(numbers)
+	if n%2 == 0 {
+		return (numbers[n/2-1] + numbers[n/2]) / 2
+	}
+	return numbers[n/2]
 }
