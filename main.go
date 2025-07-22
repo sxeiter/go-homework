@@ -28,11 +28,22 @@ func main() {
 	}
 	switch operation {
 	case "AVG":
-		fmt.Printf("Среднее: %.2f\n", AVG(numbers))
+		avg, err := AVG(numbers)
+		if err != nil {
+			fmt.Println("Ошибка:", err)
+		} else {
+			fmt.Printf("Среднее: %.2f\n", avg)
+		}
 	case "SUM":
-		fmt.Printf("Сумма: %.2f\n", SUM(numbers))
+		sum, err := SUM(numbers)
+		if err != nil {
+			fmt.Println("Ошибка:", err)
+		} else {
+			fmt.Printf("Сумма: %.2f\n", sum)
+		}
 	case "MED":
-		fmt.Printf("Медиана: %.2f\n", MED(numbers))
+		med := MED(numbers)
+		fmt.Printf("Медиана: %.2f\n", med)
 	default:
 		fmt.Println("Недопустимая операция. Используйте AVG, SUM или MED.")
 	}
@@ -49,12 +60,15 @@ func AVG(numbers []float64) (float64, error) {
 	return sum / float64(len(numbers)), nil
 }
 
-func SUM(numbers []float64) float64 {
+func SUM(numbers []float64) (float64, error) {
+	if len(numbers) == 0 {
+		return 0, fmt.Errorf("вы ничего не передали")
+	}
 	total := 0.0
 	for _, num := range numbers {
 		total += num
 	}
-	return total
+	return total, nil
 }
 
 func MED(numbers []float64) float64 {
