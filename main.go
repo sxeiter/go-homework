@@ -20,7 +20,7 @@ func init() {
 
 func main() {
 	fromCurrency, amount, toCurrency := getUserInput()
-	result := calculate(amount, fromCurrency, toCurrency)
+	result := calculate(amount, fromCurrency, toCurrency, &currencyRates)
 	outputResult(result, toCurrency)
 }
 
@@ -64,12 +64,12 @@ func isValidCurrency(currency string) bool {
 	return currency == "USD" || currency == "RUB" || currency == "EUR"
 }
 
-func calculate(amount float64, fromCurrency string, toCurrency string) float64 {
+func calculate(amount float64, fromCurrency string, toCurrency string, rates *map[string]*float64) float64 {
 	if fromCurrency == toCurrency {
 		return amount
 	}
-	fromRate := *currencyRates[fromCurrency]
-	toRate := *currencyRates[toCurrency]
+	fromRate := *(*rates)[fromCurrency]
+	toRate := *(*rates)[toCurrency]
 	return amount * (toRate / fromRate)
 }
 
