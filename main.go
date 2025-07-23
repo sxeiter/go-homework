@@ -6,10 +6,16 @@ import (
 
 const USD float64 = 1
 
-var currencyRates = map[string]float64{
-	"USD": 1,
-	"EUR": 0.9,
-	"RUB": 80,
+var currencyRates = map[string]*float64{
+	"USD": new(float64),
+	"EUR": new(float64),
+	"RUB": new(float64),
+}
+
+func init() {
+	*currencyRates["USD"] = 1
+	*currencyRates["EUR"] = 0.9
+	*currencyRates["RUB"] = 80
 }
 
 func main() {
@@ -62,8 +68,8 @@ func calculate(amount float64, fromCurrency string, toCurrency string) float64 {
 	if fromCurrency == toCurrency {
 		return amount
 	}
-	fromRate := currencyRates[fromCurrency]
-	toRate := currencyRates[toCurrency]
+	fromRate := *currencyRates[fromCurrency]
+	toRate := *currencyRates[toCurrency]
 	return amount * (toRate / fromRate)
 }
 
